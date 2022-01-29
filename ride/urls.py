@@ -27,4 +27,6 @@ urlpatterns = [
     path('driverRegister/', views.driverRegister, name='driverRegister'),
     # driver part
     path('Driver/', views.driverPage, name='Driver'),
+    path('passenger/', views.passengerPage, name='passenger'),
+    path('createRide/', views.createRide, name=''),
 ]

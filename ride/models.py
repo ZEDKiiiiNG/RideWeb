@@ -35,7 +35,7 @@ class Ride(models.Model):
     time = models.TimeField(default=timezone.now)
     start = models.CharField(max_length=32)
     end = models.CharField(max_length=32)
-    # 1.open, 2. confimerd 3. complete
+    partySize = models.IntegerField()
     status = models.CharField(max_length=32, default= 'open')
     sharer = models.ManyToManyField(User, related_name= 'sharer')
     isSharable = models.BooleanField(default=False)

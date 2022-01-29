@@ -16,16 +16,51 @@ from django.http import HttpResponse
 # def vote(request, question_id):
 #     return HttpResponse("You're voting on question %s." % question_id)
 
-from django.shortcuts import render,redirect
-from .forms import UserForm,RegisterForm,DriverRigisterForm
+from django.shortcuts import render, redirect
+from .forms import UserForm, RegisterForm, DriverRigisterForm, RideForm
 from . import models
+from .models import User, Ride
+
+
+def passengerPage(request):
+    if request.session['is_login']:
+        redirect('/login/')
+    if 'create_a_ride' in request.GET:
+        return redirect("/createRide")
+    user = User.objects.get(name=request.session['user_name'])
+    rideList = Ride.objects.filter(owner=user)
+
+    return render(request, "login/passenger.html", locals())
+
+
+def createRide(request):
+    if request.method == "POST" and request.POST:
+        ride_form = RideForm(data=request.POST)
+        if ride_form.is_valid():
+            date = ride_form.cleaned_data["date"]
+            time = ride_form.cleaned_data["time"]
+            start = ride_form.cleaned_data["start"]
+            end = ride_form.cleaned_data["end"]
+            partySize = ride_form.cleaned_data["partySize"]
+            specialText = ride_form.cleaned_data["specialText"]
+            isSharable = ride_form.cleaned_data["isSharable"]
+            username = request.session.get('user_name', None)
+            user = User.objects.get(name=username)
+
+            ride_info = Ride(owner=user, date=date, time=time, start=start, end=end,
+                             partySize=partySize, specialText=specialText, isSharable=isSharable)
+            ride_info.save()
+            return redirect('/passenger')
+    else:
+        ride_form = RideForm()
+    return render(request, "login/createRide.html", locals())
+
 
 def driverPage(request):
     if request.session['is_login']:
         redirect('/login/')
     if not request.session['is_driver']:
         return render(request, 'login/driverRegister.html', locals())
-
 
     username = request.session.get('user_name', None)
     user = models.User.objects.get(name=username)
@@ -39,7 +74,6 @@ def driverPage(request):
 
 
 def driverRegister(request):
-
     if request.session['is_driver']:
         return redirect('/Driver/')
     if request.method == "POST":
@@ -61,7 +95,7 @@ def driverRegister(request):
             if request.session.get('is_driver', None):
                 # if already is driver, then just addit
 
-                #when already a driver then cannot have drive info
+                # when already a driver then cannot have drive info
                 driver = models.Driver.objects.get(owner=user)
                 driver.vehicleType = vehicleType
                 driver.licensePlateNumber = licensePlateNumber
@@ -69,7 +103,7 @@ def driverRegister(request):
                 driver.specialInfo = specialInfo
             else:
                 driver = models.Driver(owner=user, vehicleType=vehicleType, licensePlateNumber=licensePlateNumber,
-                                     allowedPassengers=allowedPassengers, specialInfo=specialInfo)
+                                       allowedPassengers=allowedPassengers, specialInfo=specialInfo)
             user.isDriver = True
             user.save()
             request.session['is_driver'] = True
@@ -79,7 +113,7 @@ def driverRegister(request):
             return redirect('/Driver/')
 
     driver_register_form = DriverRigisterForm()
-    #TODO figure out the use of this part of code
+    # TODO figure out the use of this part of code
     # driver_name = request.session['user_name']
     # driver = models.User.objects.get(username=driver_name)
     # driver_info_Num = driver.driverinfo_set.count()
@@ -95,9 +129,10 @@ def index(request):
             else:
                 return redirect('/driverRegister/')
         else:
-            return redirect('/Passenger/')
+            return redirect('/ride/')
 
-    return render(request,'login/index.html')
+    return render(request, 'login/index.html')
+
 
 def login(request):
     # if already logged in redirect
@@ -116,7 +151,7 @@ def login(request):
                     request.session['is_login'] = True
                     request.session['user_id'] = user.id
                     request.session['user_name'] = user.name
-                    #判断是否为driver
+                    # 判断是否为driver
                     request.session['is_driver'] = user.isDriver
                     return redirect('/index/')
                 else:
@@ -127,6 +162,7 @@ def login(request):
     else:
         login_form = UserForm()
         return render(request, 'login/login.html', locals())
+
 
 def register(request):
     if request.session.get('is_login', None):
@@ -149,7 +185,7 @@ def register(request):
                     message = 'user already exists！'
                     return render(request, 'login/register.html', locals())
                 same_email_user = models.User.objects.filter(email=email)
-                if same_email_user:  #  found the same email
+                if same_email_user:  # found the same email
                     message = 'email already exits！'
                     return render(request, 'login/register.html', locals())
 
@@ -163,6 +199,7 @@ def register(request):
                 return redirect('/login/')  # return to login page
     register_form = RegisterForm()
     return render(request, 'login/register.html', locals())
+
 
 # log out in login page
 def logout(request):
