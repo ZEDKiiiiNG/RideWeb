@@ -12,3 +12,11 @@ class RegisterForm(forms.Form):
     password2 = forms.CharField(label="password_confirmed", max_length=256, widget=forms.PasswordInput(attrs={'class': 'form-control'}))
     email = forms.EmailField(label="email", widget=forms.EmailInput(attrs={'class': 'form-control'}))
 
+
+class DriverRigisterForm(forms.Form):
+    vehicleType = forms.CharField(max_length=32, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    licensePlateNumber = forms.CharField(max_length=32, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    allowedPassengers = forms.IntegerField(widget=forms.NumberInput)
+    specialInfo = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+

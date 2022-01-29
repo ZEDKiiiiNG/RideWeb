@@ -17,11 +17,71 @@ from django.http import HttpResponse
 #     return HttpResponse("You're voting on question %s." % question_id)
 
 from django.shortcuts import render,redirect
-from .forms import UserForm,RegisterForm
+from .forms import UserForm,RegisterForm,DriverRigisterForm
 from . import models
 
+def driverRegister(request):
+
+    # TODO 目前看不到数据裤里面的Driver
+    if request.session['is_driver']:
+        return render(request, 'login/base.html', locals())
+        # return redirect('/index/')
+    if request.method == "POST":
+        driver_register_form = DriverRigisterForm(request.POST)
+        message = "Please check the content！"
+        if driver_register_form.is_valid():  # get the detaile data
+            vehicleType = driver_register_form.cleaned_data['vehicleType']
+            licensePlateNumber = driver_register_form.cleaned_data['licensePlateNumber']
+            allowedPassengers = driver_register_form.cleaned_data['allowedPassengers']
+            specialInfo = driver_register_form.cleaned_data['specialInfo']
+
+            same_licensePlateNumber = models.Driver.objects.filter(licensePlateNumber=licensePlateNumber)
+            if same_licensePlateNumber:  # found the same same_licensePlateNumber
+                message = 'licensePlateNumber already exists！'
+                # TODO driver register html 页面
+                return render(request, 'login/driverRegister.html', locals())
+
+            username = request.session.get('user_name', None)
+            user = models.User.objects.get(name=username)
+            if request.session.get('is_driver', None):
+                # if already is driver, then just addit
+
+                #when already a driver then cannot have drive info
+                driver = models.Driver.objects.get(owner=user)
+                driver.vehicleType = vehicleType
+                driver.licensePlateNumber = licensePlateNumber
+                driver.allowedPassengers = allowedPassengers
+                driver.specialInfo = specialInfo
+            else:
+                driver = models.Driver(owner=user, vehicleType=vehicleType, licensePlateNumber=licensePlateNumber,
+                                     allowedPassengers=allowedPassengers, specialInfo=specialInfo)
+            user.isDriver = True
+            user.save()
+            request.session['is_driver'] = True
+
+            driver.save()
+            # TODO 修改为driver 页面
+            return redirect('/index/')
+
+    driver_register_form = DriverRigisterForm()
+    #TODO figure out the use of this part of code
+    # driver_name = request.session['user_name']
+    # driver = models.User.objects.get(username=driver_name)
+    # driver_info_Num = driver.driverinfo_set.count()
+    # driver_info = driver.driverinfo_set.all()
+    return render(request, "login/driverRegister.html", locals())
+
+
 def index(request):
-    pass
+    if request.method == "GET" and request.GET:
+        if 'Driver' in request.GET:
+            if request.session.get('is_driver', None):
+                return redirect('/Driver/')
+            else:
+                return redirect('/driverRegister/')
+        else:
+            return redirect('/index/')
+
     return render(request,'login/index.html')
 
 def login(request):
@@ -41,6 +101,8 @@ def login(request):
                     request.session['is_login'] = True
                     request.session['user_id'] = user.id
                     request.session['user_name'] = user.name
+                    #判断是否为driver
+                    request.session['is_driver'] = user.isDriver
                     return redirect('/index/')
                 else:
                     message = "password incorrect！"

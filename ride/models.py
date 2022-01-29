@@ -15,3 +15,17 @@ class User(models.Model):
 
     def __str__(self):
         return self.name
+
+class Driver(models.Model):
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    vehicleType = models.CharField(max_length=32)
+    licensePlateNumber = models.CharField(max_length=32)
+    allowedPassengers = models.IntegerField()
+    specialInfo = models.TextField(blank=True, default="")
+
+    def __str__(self):
+        return self.licensePlateNumber
+
+
+
+

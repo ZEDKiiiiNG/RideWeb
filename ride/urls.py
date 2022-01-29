@@ -23,4 +23,6 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     # ex: /polls/5/vote/
     path('logout/', views.logout, name='logout'),
+    # driverRegister part
+    path('driverRegister/', views.driverRegister, name='driverRegister'),
 ]
