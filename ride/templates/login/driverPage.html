@@ -4,13 +4,13 @@
 {% block title %}Driver page{% endblock %}
 {% block content %}
     {% if request.session.is_login %}
-    <h1>Hello,Driver {{ request.session.user_name }}！Welcome back！！</h1>
+        <h1><div style="width:100%;text-align:center">Hello, Driver {{ request.session.user_name }}！Welcome back！！</div></h1>
     <form method="GET"> <div style="width:100%;text-align:center" >
       <button type="submit" class="btn btn-primary" name="Passenger">Passenger</button>
       <button type="submit" class="btn btn-primary" name="Driver">Driver</button>
     </div>
     </form>
-    <h1>Driver</h1>
+        <h1><div style="width:100%;text-align:center">Driver Information </div></h1>
     <table class="table table-bordered">
 
         <thead>

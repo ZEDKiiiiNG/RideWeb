@@ -20,21 +20,65 @@ from django.shortcuts import render,redirect
 from .forms import UserForm,RegisterForm,DriverRigisterForm
 from . import models
 
+def driverEdit(request):
+    if not request.session['is_driver']:
+        return redirect('/driverRegister/')
+    #in case redirect and cannot display drievr information
+    driver_register_form = DriverRigisterForm()
+    username = request.session.get('user_name', None)
+    user = models.User.objects.get(name=username)
+    driver_set = user.driver_set.all()
+    if request.method == "POST":
+        driver_register_form = DriverRigisterForm(request.POST)
+        message = "Please check the content！"
+        if driver_register_form.is_valid():  # get the detaile data
+            vehicleType = driver_register_form.cleaned_data['vehicleType']
+            licensePlateNumber = driver_register_form.cleaned_data['licensePlateNumber']
+            allowedPassengers = driver_register_form.cleaned_data['allowedPassengers']
+            specialInfo = driver_register_form.cleaned_data['specialInfo']
+
+
+
+            username = request.session.get('user_name', None)
+            user = models.User.objects.get(name=username)
+            #TODO 检查逻辑
+            # if request.session.get('is_driver', None):
+            #     # if already is driver, then just addit
+            #
+            #when already a driver then cannot have drive info
+            driver = models.Driver.objects.get(owner=user)
+            same_licensePlateNumber = models.Driver.objects.filter(licensePlateNumber=licensePlateNumber)
+            if same_licensePlateNumber and licensePlateNumber != driver.licensePlateNumber:  # found the same same_licensePlateNumber
+                message = 'licensePlateNumber already exists！'
+                return render(request, 'login/driverEdit.html', locals())
+            driver.vehicleType = vehicleType
+            driver.licensePlateNumber = licensePlateNumber
+            driver.allowedPassengers = allowedPassengers
+            driver.specialInfo = specialInfo
+            driver.save()
+
+            return redirect('/Driver/')
+
+
+
+    return render(request, "login/driverEdit.html", locals())
+
+
 def driverPage(request):
     if request.session['is_login']:
         redirect('/login/')
     if not request.session['is_driver']:
         return render(request, 'login/driverRegister.html', locals())
-
+    if request.method == "GET" and request.GET:
+        if 'Edit' in request.GET:
+            return redirect('/driverEdit/')
 
     username = request.session.get('user_name', None)
     user = models.User.objects.get(name=username)
     driver_set = user.driver_set.all()
     # driver_self = models.Driver.objects.filter(owner=user)
 
-    # if request.method == "GET" and request.GET:
-    #     if 'Edit' in request.GET:
-    #         return render(request, 'login/driverEdit.html', locals())
+
     return render(request, 'login/driverPage.html', locals())
 
 
@@ -58,18 +102,21 @@ def driverRegister(request):
 
             username = request.session.get('user_name', None)
             user = models.User.objects.get(name=username)
-            if request.session.get('is_driver', None):
-                # if already is driver, then just addit
-
-                #when already a driver then cannot have drive info
-                driver = models.Driver.objects.get(owner=user)
-                driver.vehicleType = vehicleType
-                driver.licensePlateNumber = licensePlateNumber
-                driver.allowedPassengers = allowedPassengers
-                driver.specialInfo = specialInfo
-            else:
-                driver = models.Driver(owner=user, vehicleType=vehicleType, licensePlateNumber=licensePlateNumber,
-                                     allowedPassengers=allowedPassengers, specialInfo=specialInfo)
+            #TODO 检查逻辑
+            # if request.session.get('is_driver', None):
+            #     # if already is driver, then just addit
+            #
+            #     #when already a driver then cannot have drive info
+            #     driver = models.Driver.objects.get(owner=user)
+            #     driver.vehicleType = vehicleType
+            #     driver.licensePlateNumber = licensePlateNumber
+            #     driver.allowedPassengers = allowedPassengers
+            #     driver.specialInfo = specialInfo
+            # else:
+            #     driver = models.Driver(owner=user, vehicleType=vehicleType, licensePlateNumber=licensePlateNumber,
+            #                          allowedPassengers=allowedPassengers, specialInfo=specialInfo)
+            driver = models.Driver(owner=user, vehicleType=vehicleType, licensePlateNumber=licensePlateNumber,
+                                    allowedPassengers=allowedPassengers, specialInfo=specialInfo)
             user.isDriver = True
             user.save()
             request.session['is_driver'] = True

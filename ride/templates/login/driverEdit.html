@@ -24,16 +24,47 @@
       <td><div style="width:100%;text-align:center">{{driver_self.licensePlateNumber}}</div></td>
       <td><div style="width:100%;text-align:center">{{driver_self.allowedPassengers}}</div></td>
       <td><div style="width:100%;text-align:center">{{driver_self.specialInfo}}</div></td>
-      <td><div style="width:100%;text-align:center">
-        <form method="GET">
-        <button type="submit" class="btn btn-primary" name="Edit">Edit</button>
-        </form>
-      </div>
-    </td>
+
     </tr>
         {% endfor %}
         </tbody>
       </table>
+{#        register again part#}
+    <div class="container">
+        <div class="col-md-4 col-md-offset-4">
+          <form class='form-register' action="/driverEdit/" method="post">
+
+              {% if message %}
+                  <div class="alert alert-warning">{{ message }}</div>
+              {% endif %}
+
+              {% csrf_token %}
+
+              <h2 class="text-center">Please input the new Driver information</h2>
+              <div class="form-group">
+                  {{ driver_register_form.vehicleType.label_tag }}
+                  {{ driver_register_form.vehicleType}}
+              </div>
+              <div class="form-group">
+                  {{ driver_register_form.licensePlateNumber.label_tag }}
+                  {{ driver_register_form.licensePlateNumber }}
+              </div>
+              <div class="form-group">
+                  {{ driver_register_form.allowedPassengers.label_tag }}
+                  {{ driver_register_form.allowedPassengers }}
+              </div>
+              <div class="form-group">
+                  {{ driver_register_form.specialInfo.label_tag }}
+                  {{ driver_register_form.specialInfo }}
+              </div>
+
+              <button type="reset" class="btn btn-default pull-left">Reset</button>
+              <button type="submit" class="btn btn-primary pull-right">Submit</button>
+
+          </form>
+        </div>
+    </div> <!-- /container -->
+
 
     {% else %}
     <h1>You have not logged in yet！</h1>

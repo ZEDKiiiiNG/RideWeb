@@ -27,4 +27,6 @@ urlpatterns = [
     path('driverRegister/', views.driverRegister, name='driverRegister'),
     # driver part
     path('Driver/', views.driverPage, name='Driver'),
+    # driverEdit part
+    path('driverEdit/', views.driverEdit, name='driverEdit'),
 ]
