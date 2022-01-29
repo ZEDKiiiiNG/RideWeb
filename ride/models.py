@@ -36,6 +36,7 @@ class Ride(models.Model):
     start = models.CharField(max_length=32)
     end = models.CharField(max_length=32)
     partySize = models.IntegerField()
+    # open, confirmed or complete
     status = models.CharField(max_length=32, default= 'open')
     sharer = models.ManyToManyField(User, related_name= 'sharer')
     isSharable = models.BooleanField(default=False)
