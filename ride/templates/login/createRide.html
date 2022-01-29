@@ -1,0 +1,58 @@
+{% extends 'login/base.html' %} <!-- inheritance base -->
+{% load static %}
+{% block title %}Create Your Ride{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
+
+
+{% block content %}
+{% if request.session.is_login %}
+  <div style="width:100%;text-align:center">
+<h1>Start Ride System</h1>
+<h2>Welcome to Start A Ride!</h2>
+
+  <div style="width:100%;text-align:center">
+  <div class="col-md-4 col-md-offset-4">
+  <form method="POST" class="form-group">
+
+    {% csrf_token %}
+{#   {{ride_form.as_p}} #}
+      <div class="form-group">
+    {{ ride_form.date.label_tag }}
+    {{ ride_form.date}}
+    </div>
+    <div class="form-group">
+    {{ ride_form.time.label_tag }}
+    {{ ride_form.time}}
+    </div>
+    <div class="form-group">
+    {{ ride_form.start.label_tag }}
+    {{ ride_form.start}}
+    </div>
+    <div class="form-group">
+    {{ ride_form.end.label_tag }}
+    {{ ride_form.end}}
+    </div>
+    <div class="form-group">
+    {{ ride_form.partySize.label_tag }}
+    {{ ride_form.partySize}}
+    </div>
+    <div class="form-group">
+    {{ ride_form.specialText.label_tag }}
+    {{ ride_form.specialText}}
+    </div>
+      <div class="form-group">
+    {{ ride_form.isSharable.label_tag }}
+    {{ ride_form.isSharable}}
+    </div>
+
+
+    <button type="submit" class="btn btn-primary">Create Ride</button>
+  </form>
+
+  </div>
+      {% else %}
+    <h1><div style="width:100%;text-align:center">You are not login, please do that!</h1>
+    {% endif %}
+{% endblock %}

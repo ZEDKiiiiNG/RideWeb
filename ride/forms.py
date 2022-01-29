@@ -20,5 +20,18 @@ class DriverRigisterForm(forms.Form):
     allowedPassengers = forms.IntegerField(widget=forms.NumberInput)
     specialInfo = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
 
+class RideForm(forms.Form):
+    date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    time = forms.TimeField(label="Time (eg. 14:30)", input_formats=['%H:%M'], widget=forms.TimeInput(format='%H:%M'))
+    start = forms.CharField(label="Start Point", max_length=32,
+                                 widget=forms.TextInput(attrs={'class': 'form-control'}))
+    end = forms.CharField(label="End Point", max_length=32,
+                               widget=forms.TextInput(attrs={'class': 'form-control'}))
+    partySize = forms.IntegerField(label="Party Size", widget=forms.TextInput(attrs={'class': 'form-control'}))
+    specialText = forms.CharField(label="Special Text", max_length=32,
+                                  widget=forms.TextInput(attrs={'class': 'form-control'}))
+    isSharable = forms.BooleanField(initial= False, label="Is Sharable?", required=False)
+    status = forms.CharField(initial="open", label="Status", max_length=32, disabled=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+
 
 

@@ -1,0 +1,58 @@
+{% extends 'login/base.html' %}
+{% block content %}
+
+    <div style="width:100%;text-align:center">
+{% if request.session.is_login %}
+
+    <h1>Passenger Page</h1>
+    <h2>Your Own Rides</h2>
+
+<table class="table table-bordered table-hover">
+        <thead>
+          <tr>
+              <th><div style="width:100%;text-align:center">Date</div></th>
+              <th><div style="width:100%;text-align:center"></div>Time</th>
+              <th><div style="width:100%;text-align:center">Start Point</div></th>
+      <th><div style="width:100%;text-align:center">End Point</div></th>
+      <th><div style="width:100%;text-align:center">Sharer</div></th>
+      <th><div style="width:100%;text-align:center">Number of Passengers</div></th>
+      <th><div style="width:100%;text-align:center">Special Text</div></th>
+      <th><div style="width:100%;text-align:center">Sharable?</div></th>
+       <th><div style="width:100%;text-align:center">Status</div></th>
+      <th></th>
+          </tr>
+        </thead>
+        <tbody>
+  {% for ride in ride_list_open %}
+    <tr>
+      <td>{{ride.date}}</td>
+      <td>{{ride.time}}</td>
+      <td>{{ride.start}}</td>
+      <td>{{ride.end}}</td>
+      <td>
+      {% for user in ride.sharer.all %}
+      {{user.username}}<br>
+      {% endfor %}
+          {{ride.partySize}}
+      <td>{{ride.specialText}}</td>
+      <td>{{ride.isSharable}}</td>
+      <td>{{ride.status}}</td>
+{% if ride.status == 'open' %}
+      <td>
+      <form method="GET">
+      <button type="submit" name = "edit_ride" class="btn btn-primary" value = {{ride.id}}>Edit</button>
+      </form>
+      </td>
+    {% endif %}
+    </tr>
+    {% endfor %}
+        </tbody>
+      </table>
+
+
+      <form method="GET">
+      <button type="submit" name = "create_a_ride" class="btn btn-primary" value = {{ride.id}}>Create A Ride</button>
+      </form>
+
+{% endif %}
+{% endblock content %}

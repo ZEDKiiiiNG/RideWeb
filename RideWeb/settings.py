@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-2-jxr7othn#a_3^oll92!=q9fgft%-^@qf9^vas+64a2-&lxj)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['vcm-24622.vm.duke.edu', '127.0.0.1']
+ALLOWED_HOSTS = ['vcm-24622.vm.duke.edu', 'vcm-24558.vm.duke.edu', '127.0.0.1']
 
 
 # Application definition
@@ -75,14 +75,11 @@ WSGI_APPLICATION = 'RideWeb.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / 'db.sqlite3',
-    # }
-    'default' : {
+    'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'pgdb',
-        'USER': 'xl351',
+        # 'USER': 'xl351',
+        'USER': 'zw261',
         'PASSWORD': '123123123',
         'HOST': '127.0.0.1',
         'PORT': '5432',
