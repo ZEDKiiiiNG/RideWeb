@@ -54,6 +54,7 @@ def createRide(request):
 
 def driverEdit(request):
     if not request.session['is_driver']:
+        message = "Please register as a driver first ！"
         return redirect('/driverRegister/')
     #in case redirect and cannot display drievr information
     driver_register_form = DriverRigisterForm()
@@ -97,10 +98,15 @@ def driverEdit(request):
 
 
 def driverPage(request):
-    if request.session['is_login']:
-        redirect('/login/')
-    if not request.session['is_driver']:
-        return redirect('driverRegister')
+    if not request.session.get('is_login', None):
+        message = "Please log in first！"
+        # if already signed in, then cannot register
+        # return redirect("/login/")
+        #TODO 怎么让views也进入login
+        return render(request, 'login/login.html', locals())
+    if not request.session.get('is_driver', None):
+        message = "Please register as a driver first ！"
+        return redirect('/driverRegister/')
     if request.method == "GET" and request.GET:
         if 'Edit' in request.GET:
             return redirect('/driverEdit/')
@@ -116,7 +122,7 @@ def driverPage(request):
 
 def driverRegister(request):
 
-    if request.session['is_driver']:
+    if request.session.get('is_driver', None):
         return redirect('/Driver/')
     if request.method == "POST":
         driver_register_form = DriverRigisterForm(request.POST)
@@ -174,7 +180,7 @@ def index(request):
             else:
                 return redirect('/driverRegister/')
         else:
-            return redirect('/Passenger/')
+            return redirect('/index/')
 
     return render(request,'login/index.html')
 

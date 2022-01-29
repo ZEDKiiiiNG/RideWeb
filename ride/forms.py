@@ -13,21 +13,21 @@ class RegisterForm(forms.Form):
 
 
 class DriverRigisterForm(forms.Form):
-    vehicleType = forms.CharField(max_length=32, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    licensePlateNumber = forms.CharField(max_length=32, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    allowedPassengers = forms.IntegerField(widget=forms.NumberInput)
-    specialInfo = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    vehicleType = forms.CharField(label="vehicle Type",max_length=32, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    licensePlateNumber = forms.CharField(label="license Plate Number",max_length=32, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    allowedPassengers = forms.IntegerField(label="allowed Passengers",widget=forms.NumberInput)
+    specialInfo = forms.CharField(label="special Info",widget=forms.TextInput(attrs={'class': 'form-control'}))
 
 class RideForm(forms.Form):
     end = forms.CharField(label="Destination ",max_length=32, widget=forms.TextInput(attrs={'class': 'form-control'}))
     #start to make sure driver know where to pick
     start = forms.CharField(label="Start Area ", max_length=32, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    arrivalDate = forms.DateField(label="Arrival date",initial= datetime.date.today,widget=forms.DateInput(attrs={'type': 'date'}))
+    arrivalDate = forms.DateField(label="Arrival date",widget=forms.DateInput(attrs={'type': 'date'}))
     arrivalTime = forms.TimeField(label="Arrival time",input_formats=["%H.%M"], widget=forms.TimeInput(format='%H:%M'))
-    partySize = forms.IntegerField(label="Total passenger", widget=forms.TextInput(attrs={'class': 'form-control'}))
+    partySize = forms.IntegerField(label="Total passenger", widget=forms.IntegerField(widget=forms.NumberInput))
     specialRequests = forms.CharField(label="Special requests",widget=forms.TextInput(attrs={'class': 'form-control'}))
     vehicleTypeRequest = forms.CharField(label="Vehicle type request",max_length=32, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    isSharable = forms.BooleanField(label="Ride sharable",initial= False, required=False)
+    isSharable = forms.BooleanField(label="Ride sharable",initial= False)
     status = forms.CharField(initial="open", label="Status", max_length=32, disabled=True,
                              widget=forms.TextInput(attrs={'class': 'form-control'}))
 
