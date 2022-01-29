@@ -20,3 +20,4 @@ class DriverRigisterForm(forms.Form):
     specialInfo = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
 
 
+

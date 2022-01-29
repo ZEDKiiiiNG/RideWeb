@@ -1,3 +1,5 @@
+from django.utils import timezone
+from datetime import datetime
 from django.db import models
 
 # Create your models here.
@@ -25,6 +27,19 @@ class Driver(models.Model):
 
     def __str__(self):
         return self.licensePlateNumber
+
+class Ride(models.Model):
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    driverId = models.IntegerField(default=-1, blank=True)
+    date = models.DateField(default=timezone.now)
+    time = models.TimeField(default=timezone.now)
+    start = models.CharField(max_length=32)
+    end = models.CharField(max_length=32)
+    # 1.open, 2. confimerd 3. complete
+    status = models.CharField(max_length=32, default= 'open')
+    sharer = models.ManyToManyField(User, related_name= 'sharer')
+    isSharable = models.BooleanField(default=False)
+
 
 
 

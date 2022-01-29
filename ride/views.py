@@ -80,7 +80,7 @@ def index(request):
             else:
                 return redirect('/driverRegister/')
         else:
-            return redirect('/index/')
+            return redirect('/Passenger/')
 
     return render(request,'login/index.html')
 
