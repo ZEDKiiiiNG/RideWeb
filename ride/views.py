@@ -17,8 +17,40 @@ from django.http import HttpResponse
 #     return HttpResponse("You're voting on question %s." % question_id)
 
 from django.shortcuts import render,redirect
-from .forms import UserForm,RegisterForm,DriverRigisterForm
+from .forms import UserForm,RegisterForm,DriverRigisterForm, RideForm
 from . import models
+
+def passengerPage(request):
+    if request.session['is_login']:
+        redirect('/login/')
+    if 'create_a_ride' in request.GET:
+        return redirect("/createRide")
+    user = models.User.objects.get(name=request.session['user_name'])
+    rideList = models.Ride.objects.filter(owner=user)
+
+    return render(request, "login/passenger.html", locals())
+
+def createRide(request):
+    if request.method == "POST" and request.POST:
+        ride_form = RideForm(data=request.POST)
+        if ride_form.is_valid():
+            date = ride_form.cleaned_data["date"]
+            time = ride_form.cleaned_data["time"]
+            start = ride_form.cleaned_data["start"]
+            end = ride_form.cleaned_data["end"]
+            partySize = ride_form.cleaned_data["partySize"]
+            specialText = ride_form.cleaned_data["specialText"]
+            isSharable = ride_form.cleaned_data["isSharable"]
+            username = request.session.get('user_name', None)
+            user = models.User.objects.get(name=username)
+
+            ride_info = models.Ride(owner=user, date=date, time=time, start=start, end=end,
+                             partySize=partySize, specialText=specialText, isSharable=isSharable)
+            ride_info.save()
+            return redirect('/passenger')
+    else:
+        ride_form = RideForm()
+    return render(request, "login/createRide.html", locals())
 
 def driverEdit(request):
     if not request.session['is_driver']:
@@ -68,7 +100,7 @@ def driverPage(request):
     if request.session['is_login']:
         redirect('/login/')
     if not request.session['is_driver']:
-        return render(request, 'login/driverRegister.html', locals())
+        return redirect('driverRegister')
     if request.method == "GET" and request.GET:
         if 'Edit' in request.GET:
             return redirect('/driverEdit/')
