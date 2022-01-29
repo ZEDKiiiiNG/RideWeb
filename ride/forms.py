@@ -14,6 +14,7 @@ class RegisterForm(forms.Form):
 
 
 class DriverRigisterForm(forms.Form):
+
     vehicleType = forms.CharField(max_length=32, widget=forms.TextInput(attrs={'class': 'form-control'}))
     licensePlateNumber = forms.CharField(max_length=32, widget=forms.TextInput(attrs={'class': 'form-control'}))
     allowedPassengers = forms.IntegerField(widget=forms.NumberInput)

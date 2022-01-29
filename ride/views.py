@@ -20,12 +20,28 @@ from django.shortcuts import render,redirect
 from .forms import UserForm,RegisterForm,DriverRigisterForm
 from . import models
 
+def driverPage(request):
+    if request.session['is_login']:
+        redirect('/login/')
+    if not request.session['is_driver']:
+        return render(request, 'login/driverRegister.html', locals())
+
+
+    username = request.session.get('user_name', None)
+    user = models.User.objects.get(name=username)
+    driver_set = user.driver_set.all()
+    # driver_self = models.Driver.objects.filter(owner=user)
+
+    # if request.method == "GET" and request.GET:
+    #     if 'Edit' in request.GET:
+    #         return render(request, 'login/driverEdit.html', locals())
+    return render(request, 'login/driverPage.html', locals())
+
+
 def driverRegister(request):
 
-    # TODO 目前看不到数据裤里面的Driver
     if request.session['is_driver']:
-        return render(request, 'login/base.html', locals())
-        # return redirect('/index/')
+        return redirect('/Driver/')
     if request.method == "POST":
         driver_register_form = DriverRigisterForm(request.POST)
         message = "Please check the content！"
@@ -38,7 +54,6 @@ def driverRegister(request):
             same_licensePlateNumber = models.Driver.objects.filter(licensePlateNumber=licensePlateNumber)
             if same_licensePlateNumber:  # found the same same_licensePlateNumber
                 message = 'licensePlateNumber already exists！'
-                # TODO driver register html 页面
                 return render(request, 'login/driverRegister.html', locals())
 
             username = request.session.get('user_name', None)
@@ -61,7 +76,7 @@ def driverRegister(request):
 
             driver.save()
             # TODO 修改为driver 页面
-            return redirect('/index/')
+            return redirect('/Driver/')
 
     driver_register_form = DriverRigisterForm()
     #TODO figure out the use of this part of code

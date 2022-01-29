@@ -25,4 +25,6 @@ urlpatterns = [
     path('logout/', views.logout, name='logout'),
     # driverRegister part
     path('driverRegister/', views.driverRegister, name='driverRegister'),
+    # driver part
+    path('Driver/', views.driverPage, name='Driver'),
 ]
