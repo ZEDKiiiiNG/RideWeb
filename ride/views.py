@@ -34,8 +34,8 @@ def passengerPage(request):
 
     if 'create ride' in request.GET:
         return redirect("/createRide")
-    user = models.User.objects.get(name=request.session['user_name'])
-    rideList = models.Ride.objects.filter(owner=user)
+    # user = models.User.objects.get(name=request.session['user_name'])
+    # rideList = models.Ride.objects.filter(owner=user)
 
     return render(request, "login/passenger.html", locals())
 

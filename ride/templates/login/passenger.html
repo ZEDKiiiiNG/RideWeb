@@ -68,7 +68,7 @@
           <th><div style="width:100%;text-align:center">{{ride_item.partySize}} </div></th>
           <th><div style="width:100%;text-align:center">
               {% for joint_ride in ride_item.sharer.all %}
-              Sharer name {{joint_ride.owner.username}}<br>
+              Sharer name {{joint_ride.owner.name}}<br>
                   Sharer party number {{joint_ride.partySize}}<br>
               {% endfor %}
           </div></th>
