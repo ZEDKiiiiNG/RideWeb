@@ -50,8 +50,7 @@ class RideForm(forms.ModelForm):
         model = models.Ride
         fields = ('start', 'end', 'date', 'time', 'partySize', 'specialRequests', 'isSharable')
         help_texts = {
-            'date': 'ex: 01/01/2022',
-            'time': 'ex: 14:30'
+            'time': '(Time Format: 14:30)'
         }
         widgets = {
             "start": TextInput(attrs={'class': 'form-control'}),
