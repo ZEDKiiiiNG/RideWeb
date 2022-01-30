@@ -49,6 +49,7 @@ class Ride(models.Model):
     sharer = models.ManyToManyField(JoinRide, blank=True, related_name='sharer')
     isSharable = models.BooleanField(default=False)
     specialRequests = models.TextField(blank=True, default="")
+    vehicleTypeRequest = models.TextField(blank=True, default="")
 
     def __str__(self):
         return self.start + self.end

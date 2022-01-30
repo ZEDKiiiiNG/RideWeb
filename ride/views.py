@@ -17,9 +17,35 @@ from django.http import HttpResponse
 #     return HttpResponse("You're voting on question %s." % question_id)
 
 from django.shortcuts import render,redirect
-from .forms import UserForm,RegisterForm,DriverRigisterForm, RideForm,passengerSearchRideForm
+from .forms import UserForm,RegisterForm,DriverRigisterForm, RideForm,passengerSearchRideForm, JointRideForm
 from . import models
 from django.db.models import Q
+
+
+def jointEditRide(request):
+    if not request.session.get('is_login', None):
+        message = "Please log in first！"
+        return render(request, 'login/login.html', locals())
+    joint_ride_form = JointRideForm()
+    ride_edit_id = request.session.get('joint_ride_edit_id', None)
+    #TODO 前面部分要不要也改id写法
+    ride_item = models.Ride.objects.get(id = ride_edit_id)
+    if request.method == "POST" and request.POST:
+        joint_ride_form = JointRideForm(request.POST)
+        if joint_ride_form.is_valid():
+            joint_sharer = ride_item.sharer.all()
+            username = request.session.get('user_name', None)
+            user = models.User.objects.get(name=username)
+            sharer = joint_sharer.get(owner= user)
+            sharer.partySize = joint_ride_form.cleaned_data["partySize"]
+            sharer.save()
+            ride_item.save()
+            return redirect('/passenger')
+        else:
+            message = 'please check the input format'
+            return render(request, "login/jointEditRide.html", locals())
+    return render(request, "login/jointEditRide.html", locals())
+
 
 def passengerSearchRide(request):
     if not request.session.get('is_login', None):
@@ -86,7 +112,7 @@ def editRide(request):
             ride_item.time = ride_form.cleaned_data["arrivalTime"]
             ride_item.partySize = ride_form.cleaned_data["partySize"]
             ride_item.specialRequests = ride_form.cleaned_data["specialRequests"]
-
+            ride_item.vehicleTypeRequest = ride_form.cleaned_data["vehicleTypeRequest"]
             ride_item.isSharable = ride_form.cleaned_data["isSharable"]
 
 
@@ -118,6 +144,11 @@ def passengerPage(request):
         return redirect("/editRide")
     if 'search ride' in request.GET:
         return redirect("/passengerSearchRide")
+    if 'joint Edit' in request.GET:
+        ride_edit_id = request.GET.get('joint Edit')
+        request.session['joint_ride_edit_id'] = ride_edit_id
+        return redirect("/jointEditRide")
+
     # user = models.User.objects.get(name=request.session['user_name'])
     # rideList = models.Ride.objects.filter(owner=user)
 
@@ -131,18 +162,18 @@ def createRide(request):
             end = ride_form.cleaned_data["end"]
             # start to make sure driver know where to pick
             start = ride_form.cleaned_data["start"]
-            arrivalDate = ride_form.cleaned_data["date"]
-            arrivalTime = ride_form.cleaned_data["time"]
+            arrivalDate = ride_form.cleaned_data["arrivalDate"]
+            arrivalTime = ride_form.cleaned_data["arrivalTime"]
             partySize = ride_form.cleaned_data["partySize"]
             specialRequests = ride_form.cleaned_data["specialRequests"]
-
+            vehicleTypeRequest = ride_form.cleaned_data["vehicleTypeRequest"]
             isSharable = ride_form.cleaned_data["isSharable"]
 
             username = request.session.get('user_name', None)
             user = models.User.objects.get(name=username)
 
             newRide = models.Ride(owner=user, date=arrivalDate, time=arrivalTime, start=start, end=end,
-                             partySize=partySize, specialRequests=specialRequests, isSharable=isSharable)
+                             partySize=partySize, specialRequests=specialRequests, isSharable=isSharable, vehicleTypeRequest= vehicleTypeRequest)
 
             newRide.save()
             return redirect('/passenger')

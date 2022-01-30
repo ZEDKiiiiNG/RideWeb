@@ -39,4 +39,6 @@ urlpatterns = [
     path('editRide/', views.editRide, name='editRide'),
     # passenger search ride part
     path('passengerSearchRide/', views.passengerSearchRide, name='passengerSearchRide'),
+    # joint ride edit part
+    path('jointEditRide/', views.jointEditRide, name='jointEditRide'),
 ]

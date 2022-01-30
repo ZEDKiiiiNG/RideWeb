@@ -32,6 +32,7 @@
           <th><div style="width:100%;text-align:center"> Sharer name and party numbers </div></th>
           <th><div style="width:100%;text-align:center"> is Sharable </div></th>
           <th><div style="width:100%;text-align:center"> Special Requests </div></th>
+          <th><div style="width:100%;text-align:center"> Vehicle Type Requests </div></th>
           <th><div style="width:100%;text-align:center"> Status </div></th>
             <th><div style="width:100%;text-align:center"> Operation </div></th>
       <th></th>
@@ -69,6 +70,7 @@
               <th><div style="width:100%;text-align:center"> not Sharable  </div></th>
           {% endif %}
           <th><div style="width:100%;text-align:center"> {{ride_item.specialRequests}}  </div></th>
+          <th><div style="width:100%;text-align:center"> {{ride_item.vehicleTypeRequest}}  </div></th>
           <th><div style="width:100%;text-align:center"> {{ride_item.status}} </div></th>
 {#      open or claimed can be modify by owner#}
       {% if ride_item.status == 'open' or ride_item.status == 'claimed'%}
@@ -108,6 +110,7 @@
           <th><div style="width:100%;text-align:center"> Sharer name and party numbers </div></th>
           <th><div style="width:100%;text-align:center"> is Sharable </div></th>
           <th><div style="width:100%;text-align:center"> Special Requests </div></th>
+          <th><div style="width:100%;text-align:center"> Vehicle Type Requests </div></th>
           <th><div style="width:100%;text-align:center"> Status </div></th>
             <th><div style="width:100%;text-align:center"> Operation </div></th>
       <th></th>
@@ -145,12 +148,13 @@
               <th><div style="width:100%;text-align:center"> not Sharable  </div></th>
           {% endif %}
           <th><div style="width:100%;text-align:center"> {{ride_item.specialRequests}}  </div></th>
+          <th><div style="width:100%;text-align:center"> {{ride_item.vehicleTypeRequest}}  </div></th>
           <th><div style="width:100%;text-align:center"> {{ride_item.status}} </div></th>
 {#      open or claimed can be modify by owner#}
       {% if ride_item.status == 'open' or ride_item.status == 'claimed'%}
       <td><div style="width:100%;text-align:center">
         <form method="GET">
-        <button type="submit" class="btn btn-primary" name="Edit" value= {{ ride_item.id }}>Edit</button>
+        <button type="submit" class="btn btn-primary" name="joint Edit" value= {{ ride_item.id }}>Edit</button>
         </form>
       </div>
     </td>
