@@ -20,6 +20,39 @@ from django.shortcuts import render,redirect
 from .forms import UserForm,RegisterForm,DriverRigisterForm, RideForm
 from . import models
 
+def passengerSearchRide(request):
+    if not request.session.get('is_login', None):
+        message = "Please log in first！"
+        return render(request, 'login/login.html', locals())
+def editRide(request):
+    if not request.session.get('is_login', None):
+        message = "Please log in first！"
+        return render(request, 'login/login.html', locals())
+    ride_form = RideForm()
+    ride_edit_id = request.session.get('ride_edit_id', None)
+    ride_item = models.Ride.objects.get(id = ride_edit_id)
+    if request.method == "POST" and request.POST:
+        ride_form = RideForm(request.POST)
+        if ride_form.is_valid():
+            ride_item.end = ride_form.cleaned_data["end"]
+            # start to make sure driver know where to pick
+            ride_item.start = ride_form.cleaned_data["start"]
+            ride_item.date = ride_form.cleaned_data["arrivalDate"]
+            ride_item.time = ride_form.cleaned_data["arrivalTime"]
+            ride_item.partySize = ride_form.cleaned_data["partySize"]
+            ride_item.specialRequests = ride_form.cleaned_data["specialRequests"]
+
+            ride_item.isSharable = ride_form.cleaned_data["isSharable"]
+
+
+            ride_item.save()
+            return redirect('/passenger')
+        else:
+            message = 'please check the input format'
+            return render(request, "login/editRide.html", locals())
+    return render(request, "login/editRide.html", locals())
+
+
 def passengerPage(request):
     if not request.session.get('is_login', None):
         message = "Please log in first！"
@@ -34,6 +67,10 @@ def passengerPage(request):
 
     if 'create ride' in request.GET:
         return redirect("/createRide")
+    if 'Edit' in request.GET:
+        ride_edit_id = request.GET.get('Edit')
+        request.session['ride_edit_id'] = ride_edit_id
+        return redirect("/editRide")
     # user = models.User.objects.get(name=request.session['user_name'])
     # rideList = models.Ride.objects.filter(owner=user)
 
@@ -73,6 +110,7 @@ def driverEdit(request):
         message = "Please register as a driver first ！"
         return redirect('/driverRegister/')
     #in case redirect and cannot display drievr information
+    #TODO check set structre
     driver_register_form = DriverRigisterForm()
     username = request.session.get('user_name', None)
     user = models.User.objects.get(name=username)

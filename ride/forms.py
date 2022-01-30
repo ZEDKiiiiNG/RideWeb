@@ -25,8 +25,8 @@ class RideForm(forms.Form):
     end = forms.CharField(label="Destination ",max_length=32, widget=forms.TextInput(attrs={'class': 'form-control'}))
     #start to make sure driver know where to pick
     start = forms.CharField(label="Start Area ", max_length=32, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    arrivalDate = forms.DateField(label="Arrival date",widget=calendar_widget)
-    arrivalTime = forms.TimeField(label="Arrival time", widget=time_widget, help_text='ex: 10:30AM',
+    arrivalDate = forms.DateField(label="Arrival date",widget=calendar_widget , help_text='ex: 12/23/2018')
+    arrivalTime = forms.TimeField(label="Arrival time", widget=time_widget, help_text='ex: 10:30',
                                  input_formats=valid_time_formats)
     partySize = forms.IntegerField( label="Party Passengers number",widget=forms.NumberInput)
     specialRequests = forms.CharField(required=False,label="Special requests",widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -35,5 +35,14 @@ class RideForm(forms.Form):
     status = forms.CharField(initial="open", label="Status", max_length=32, disabled=True,
                              widget=forms.TextInput(attrs={'class': 'form-control'}))
 
+class passengerSearchRideForm(forms.Form):
+    end = forms.CharField(label="Destination ", max_length=32, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    earlyArrivalDate = forms.DateField(label="Arrival date", widget=calendar_widget)
+    earlyArrivalTime = forms.TimeField(label="Arrival time", widget=time_widget, help_text='ex: 10:30AM',
+                                       input_formats=valid_time_formats)
+    lateArrivalDate = forms.DateField(label="Arrival date", widget=calendar_widget)
+    lateArrivalTime = forms.TimeField(label="Arrival time", widget=time_widget, help_text='ex: 10:30AM',
+                                       input_formats=valid_time_formats)
+    partySize = forms.IntegerField(label="Party Passengers number", widget=forms.NumberInput)
 
 

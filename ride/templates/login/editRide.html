@@ -1,34 +1,12 @@
 {#login/templates/login/index.html#}
 
 {% extends 'login/base.html' %}
-{% block title %}Driver page{% endblock %}
+{% block title %}Edit Driver Info{% endblock %}
 {% block content %}
     {% if request.session.is_login %}
-        <h1><div style="width:100%;text-align:center">Hello, Passenger {{ request.session.user_name }}！Welcome back！！</div></h1>
 
-        <h2><div style="width:100%;text-align:center">Ride Creation </div></h2>
-        <form method="GET">
-        <button type="submit" class="btn btn-primary" name="create ride">Create Ride</button>
-        </form>
-
-{#        {% for ride_self in rideList %}#}
-{#        {{ ride_self }}#}
-{#        {% endfor %}#}
-
-{#         owner = models.ForeignKey(User, on_delete=models.CASCADE)#}
-{#    driverId = models.IntegerField(default=-1, blank=True)#}
-{#    date = models.DateField(default=timezone.now)#}
-{#    time = models.TimeField(default=timezone.now)#}
-{#    start = models.CharField(max_length=32)#}
-{#    end = models.CharField(max_length=32)#}
-{#    partySize = models.IntegerField()#}
-{#    # open, confirmed or complete#}
-{#    status = models.CharField(max_length=32, default= 'open')#}
-{#    sharer = models.ManyToManyField(User, related_name= 'sharer')#}
-{#    isSharable = models.BooleanField(default=False)#}
-{#    specialRequests = models.TextField(blank=True, default="")#}
-        <h2><div style="width:100%;text-align:center">Your own Ride</div></h2>
-        <table class="table table-bordered">
+    <h1>Current Ride Information</h1>
+    <table class="table table-bordered">
 
         <thead>
 
@@ -44,15 +22,13 @@
           <th><div style="width:100%;text-align:center"> is Sharable </div></th>
           <th><div style="width:100%;text-align:center"> Special Requests </div></th>
           <th><div style="width:100%;text-align:center"> Status </div></th>
-            <th><div style="width:100%;text-align:center"> Operation </div></th>
       <th></th>
           </tr>
         </thead>
         <tbody>
     <tr>
-  {% for ride_item in rideList %}
-      {% if ride_item.status != 'complete' %}
-              <td><div style="width:100%;text-align:center">{{ride_item.owner.name}}</div></td>
+
+          <td><div style="width:100%;text-align:center">{{ride_item.owner.name}}</div></td>
       {% if ride_item.status == 'confirmed' %}
           <td><div style="width:100%;text-align:center">Driver name:{{ride_item.driver.owner.name}}<br>
               Vehicle Type: {{ ride_item.driver.vehicleType}}<br>
@@ -81,24 +57,31 @@
           {% endif %}
           <th><div style="width:100%;text-align:center"> {{ride_item.specialRequests}}  </div></th>
           <th><div style="width:100%;text-align:center"> {{ride_item.status}} </div></th>
-{#      open or claimed can be modify by owner#}
-      {% if ride_item.status == 'open' or ride_item.status == 'claimed'%}
-      <td><div style="width:100%;text-align:center">
-        <form method="GET">
-        <button type="submit" class="btn btn-primary" name="Edit" value= {{ ride_item.id }}>Edit</button>
-        </form>
-      </div>
-    </td>
-          {% else %}
-            <td><div style="width:100%;text-align:center">Ride already confirmed no change can be made</div></td>
-      {% endif %}
+
 
     </tr>
-      {% endif %}
-
-        {% endfor %}
         </tbody>
       </table>
+{#        register again part#}
+    <div class="container">
+        <div class="col-md-4 col-md-offset-4">
+          <form class='form-register' action="/editRide/" method="post">
+
+              {% if message %}
+                  <div class="alert alert-warning">{{ message }}</div>
+              {% endif %}
+
+              {% csrf_token %}
+{#          or as_ul or as_table#}
+              {{ride_form.as_p}}
+
+
+              <button type="reset" class="btn btn-default pull-left">Reset</button>
+              <button type="submit" class="btn btn-primary pull-right">Submit</button>
+
+          </form>
+        </div>
+    </div> <!-- /container -->
 
 
     {% else %}
