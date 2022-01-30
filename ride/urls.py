@@ -16,6 +16,8 @@ from . import views
 
 urlpatterns = [
     # ex: /polls/
+    path('', views.index, name='indexDefault'),
+    # ex: /polls/
     path('index/', views.index, name='index'),
     # ex: /polls/5/
     path('login/', views.login, name='login'),
@@ -30,7 +32,7 @@ urlpatterns = [
     # driverEdit part
     path('driverEdit/', views.driverEdit, name='driverEdit'),
     # passenger part
-    # path('passenger/', views.passengerPage, name='passenger'),
+    path('passenger/', views.passengerPage, name='passenger'),
     # ride create part
-    # path('createRide/', views.createRide, name='createRide'),
+    path('createRide/', views.createRide, name='createRide'),
 ]

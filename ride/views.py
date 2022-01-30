@@ -21,9 +21,18 @@ from .forms import UserForm,RegisterForm,DriverRigisterForm, RideForm
 from . import models
 
 def passengerPage(request):
-    if request.session['is_login']:
-        redirect('/login/')
-    if 'create_a_ride' in request.GET:
+    if not request.session.get('is_login', None):
+        message = "Please log in first！"
+        # if already signed in, then cannot register
+        # return redirect("/login/")
+        #TODO 怎么让views也进入login
+        return render(request, 'login/login.html', locals())
+
+    username = request.session.get('user_name', None)
+    user = models.User.objects.get(name=username)
+    rideList = user.ride_set.all()
+
+    if 'create ride' in request.GET:
         return redirect("/createRide")
     user = models.User.objects.get(name=request.session['user_name'])
     rideList = models.Ride.objects.filter(owner=user)
@@ -31,25 +40,32 @@ def passengerPage(request):
     return render(request, "login/passenger.html", locals())
 
 def createRide(request):
+    ride_form = RideForm()
     if request.method == "POST" and request.POST:
-        ride_form = RideForm(data=request.POST)
+        ride_form = RideForm(request.POST)
         if ride_form.is_valid():
-            date = ride_form.cleaned_data["date"]
-            time = ride_form.cleaned_data["time"]
-            start = ride_form.cleaned_data["start"]
             end = ride_form.cleaned_data["end"]
+            # start to make sure driver know where to pick
+            start = ride_form.cleaned_data["start"]
+            arrivalDate = ride_form.cleaned_data["arrivalDate"]
+            arrivalTime = ride_form.cleaned_data["arrivalTime"]
             partySize = ride_form.cleaned_data["partySize"]
-            specialText = ride_form.cleaned_data["specialText"]
+            specialRequests = ride_form.cleaned_data["specialRequests"]
+
             isSharable = ride_form.cleaned_data["isSharable"]
+
             username = request.session.get('user_name', None)
             user = models.User.objects.get(name=username)
 
-            ride_info = models.Ride(owner=user, date=date, time=time, start=start, end=end,
-                             partySize=partySize, specialText=specialText, isSharable=isSharable)
-            ride_info.save()
+            newRide = models.Ride(owner=user, date=arrivalDate, time=arrivalTime, start=start, end=end,
+                             partySize=partySize, specialRequests=specialRequests, isSharable=isSharable)
+
+            newRide.save()
             return redirect('/passenger')
-    else:
-        ride_form = RideForm()
+        else:
+            message = 'please check the input format'
+            return render(request, "login/createRide.html", locals())
+
     return render(request, "login/createRide.html", locals())
 
 def driverEdit(request):

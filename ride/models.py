@@ -28,9 +28,15 @@ class Driver(models.Model):
     def __str__(self):
         return self.licensePlateNumber
 
+class JoinRide(models.Model):
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    partySize = models.IntegerField()
+    def __str__(self):
+        return self.owner + self.partySize
+
 class Ride(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    driverId = models.IntegerField(default=-1, blank=True)
+    driver = models.ForeignKey(Driver, null= True, on_delete=models.CASCADE)
     date = models.DateField(default=timezone.now)
     time = models.TimeField(default=timezone.now)
     start = models.CharField(max_length=32)
@@ -38,8 +44,16 @@ class Ride(models.Model):
     partySize = models.IntegerField()
     # open, confirmed or complete
     status = models.CharField(max_length=32, default= 'open')
-    sharer = models.ManyToManyField(User, related_name= 'sharer')
+    # sharer = models.ManyToManyField(User, related_name= 'sharer')
+    # sharer = models.ForeignKey(JoinRide, null= True, on_delete=models.CASCADE)
+    sharer = models.ManyToManyField(JoinRide, blank = True, related_name='sharer')
     isSharable = models.BooleanField(default=False)
+    specialRequests = models.TextField(blank=True, default="")
+
+    def __str__(self):
+        return self.owner + self.driver
+
+
 
 
 

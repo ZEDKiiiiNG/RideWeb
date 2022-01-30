@@ -1,58 +1,97 @@
+{#login/templates/login/index.html#}
+
 {% extends 'login/base.html' %}
+{% block title %}Driver page{% endblock %}
 {% block content %}
+    {% if request.session.is_login %}
+        <h1><div style="width:100%;text-align:center">Hello, Passenger {{ request.session.user_name }}！Welcome back！！</div></h1>
 
-    <div style="width:100%;text-align:center">
-{% if request.session.is_login %}
+        <h2><div style="width:100%;text-align:center">Ride Creation </div></h2>
+        <form method="GET">
+        <button type="submit" class="btn btn-primary" name="create ride">Create Ride</button>
+        </form>
 
-    <h1>Passenger Page</h1>
-    <h2>Your Own Rides</h2>
+{#        {% for ride_self in rideList %}#}
+{#        {{ ride_self }}#}
+{#        {% endfor %}#}
 
-<table class="table table-bordered table-hover">
+{#         owner = models.ForeignKey(User, on_delete=models.CASCADE)#}
+{#    driverId = models.IntegerField(default=-1, blank=True)#}
+{#    date = models.DateField(default=timezone.now)#}
+{#    time = models.TimeField(default=timezone.now)#}
+{#    start = models.CharField(max_length=32)#}
+{#    end = models.CharField(max_length=32)#}
+{#    partySize = models.IntegerField()#}
+{#    # open, confirmed or complete#}
+{#    status = models.CharField(max_length=32, default= 'open')#}
+{#    sharer = models.ManyToManyField(User, related_name= 'sharer')#}
+{#    isSharable = models.BooleanField(default=False)#}
+{#    specialRequests = models.TextField(blank=True, default="")#}
+        <h2><div style="width:100%;text-align:center">Your own Ride</div></h2>
+        <table class="table table-bordered">
+
         <thead>
-          <tr>
-              <th><div style="width:100%;text-align:center">Date</div></th>
-              <th><div style="width:100%;text-align:center"></div>Time</th>
-              <th><div style="width:100%;text-align:center">Start Point</div></th>
-      <th><div style="width:100%;text-align:center">End Point</div></th>
-      <th><div style="width:100%;text-align:center">Sharer</div></th>
-      <th><div style="width:100%;text-align:center">Number of Passengers</div></th>
-      <th><div style="width:100%;text-align:center">Special Text</div></th>
-      <th><div style="width:100%;text-align:center">Sharable?</div></th>
-       <th><div style="width:100%;text-align:center">Status</div></th>
+
+{#          <th><div style="width:100%;text-align:center"></div></th>#}
+          <th><div style="width:100%;text-align:center">Ride Owner</div></th>
+          <th><div style="width:100%;text-align:center"> Driver info</div></th>
+          <th><div style="width:100%;text-align:center">Arrival date</div></th>
+          <th><div style="width:100%;text-align:center"> Arrival time </div></th>
+          <th><div style="width:100%;text-align:center"> Starting  </div></th>
+          <th><div style="width:100%;text-align:center"> Destination </div></th>
+          <th><div style="width:100%;text-align:center"> Owner passenger numbers </div></th>
+          <th><div style="width:100%;text-align:center"> Sharer name and party numbers </div></th>
+          <th><div style="width:100%;text-align:center"> Special Requests </div></th>
+          <th><div style="width:100%;text-align:center"> Status </div></th>
+            <th><div style="width:100%;text-align:center"> Operation </div></th>
       <th></th>
           </tr>
         </thead>
         <tbody>
-  {% for ride in ride_list_open %}
     <tr>
-      <td>{{ride.date}}</td>
-      <td>{{ride.time}}</td>
-      <td>{{ride.start}}</td>
-      <td>{{ride.end}}</td>
-      <td>
-      {% for user in ride.sharer.all %}
-      {{user.username}}<br>
-      {% endfor %}
-          {{ride.partySize}}
-      <td>{{ride.specialText}}</td>
-      <td>{{ride.isSharable}}</td>
-      <td>{{ride.status}}</td>
-{% if ride.status == 'open' %}
-      <td>
-      <form method="GET">
-      <button type="submit" name = "edit_ride" class="btn btn-primary" value = {{ride.id}}>Edit</button>
-      </form>
-      </td>
-    {% endif %}
+  {% for ride_item in rideList %}
+          <td><div style="width:100%;text-align:center">{{ride_item.owner.name}}</div></td>
+      {% if ride_item.status == 'confirmed' %}
+          <td><div style="width:100%;text-align:center">Driver name:{{ride_item.driver.owner.name}}<br>
+              Vehicle Type: {{ ride_item.driver.vehicleType}}<br>
+              Licence Plate: {{ ride_item.driver.licensePlateNumber}}<br>
+              Allowed Passengers: {{ ride_item.driver.allowedPassengers}}<br>
+              Speical Text: {{ ride_item.driver.specialInfo }}
+          </div></td>
+          {% else %}
+            <td><div style="width:100%;text-align:center">Ride not confirmed yet</div></td>
+      {% endif %}
+          <td><div style="width:100%;text-align:center">{{ride_item.date}}</div></td>
+          <td><div style="width:100%;text-align:center">{{ride_item.time}}</div></td>
+          <th><div style="width:100%;text-align:center">{{ride_item.start}}</div></th>
+          <th><div style="width:100%;text-align:center"> {{ride_item.end}} </div></th>
+          <th><div style="width:100%;text-align:center">{{ride_item.partySize}} </div></th>
+          <th><div style="width:100%;text-align:center">
+              {% for joint_ride in ride_item.sharer.all %}
+              Sharer name {{joint_ride.owner.username}}<br>
+                  Sharer party number {{joint_ride.partySize}}<br>
+              {% endfor %}
+          </div></th>
+          <th><div style="width:100%;text-align:center"> {{ride_item.specialRequests}}  </div></th>
+          <th><div style="width:100%;text-align:center"> {{ride_item.status}} </div></th>
+      {% if ride_item.status == 'open' %}
+      <td><div style="width:100%;text-align:center">
+        <form method="GET">
+        <button type="submit" class="btn btn-primary" name="Edit">Edit</button>
+        </form>
+      </div>
+    </td>
+          {% else %}
+            <td><div style="width:100%;text-align:center">Ride already confirmed no change can be made</div></td>
+      {% endif %}
+
     </tr>
-    {% endfor %}
+        {% endfor %}
         </tbody>
       </table>
 
 
-      <form method="GET">
-      <button type="submit" name = "create_a_ride" class="btn btn-primary" value = {{ride.id}}>Create A Ride</button>
-      </form>
-
-{% endif %}
-{% endblock content %}
+    {% else %}
+    <h1>You have not logged in yet！</h1>
+    {% endif %}
+{% endblock %}
