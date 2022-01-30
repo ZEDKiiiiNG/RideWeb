@@ -37,4 +37,6 @@ urlpatterns = [
     path('createRide/', views.createRide, name='createRide'),
     # ride edit part
     path('editRide/', views.editRide, name='editRide'),
+    # passenger search ride part
+    path('passengerSearchRide/', views.passengerSearchRide, name='passengerSearchRide'),
 ]

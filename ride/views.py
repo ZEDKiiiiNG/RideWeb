@@ -17,13 +17,57 @@ from django.http import HttpResponse
 #     return HttpResponse("You're voting on question %s." % question_id)
 
 from django.shortcuts import render,redirect
-from .forms import UserForm,RegisterForm,DriverRigisterForm, RideForm
+from .forms import UserForm,RegisterForm,DriverRigisterForm, RideForm,passengerSearchRideForm
 from . import models
+from django.db.models import Q
 
 def passengerSearchRide(request):
     if not request.session.get('is_login', None):
         message = "Please log in first！"
         return render(request, 'login/login.html', locals())
+    pass_search_form  = passengerSearchRideForm()
+    if request.method == "GET" and request.GET:
+        if 'go back' in request.GET:
+            return redirect("/passenger/")
+        if 'Join' in request.GET:
+            ride_join_id = request.GET.get('Join')
+            #TODO
+            ride_item = models.Ride.objects.get(id=ride_join_id)
+            username = request.session.get('user_name', None)
+            user = models.User.objects.get(name=username)
+            user_party_size = request.session.get('partySize',0)
+            new_sharar = models.JoinRide(owner=user, partySize= user_party_size)
+            new_sharar.save()
+            ride_item.sharer.add(new_sharar)
+            message = "successfully join the ride"
+            return redirect("/passenger/")
+    if request.method == "POST" and request.POST:
+        pass_search_form = passengerSearchRideForm(request.POST)
+        if pass_search_form.is_valid():
+            #user cannot be the owner
+            username = request.session.get('user_name', None)
+            user = models.User.objects.get(name=username)
+            end = pass_search_form.cleaned_data["end"]
+            earlyArrivalDate = pass_search_form.cleaned_data["earlyArrivalDate"]
+            earlyArrivalTime = pass_search_form.cleaned_data["earlyArrivalTime"]
+            lateArrivalDate = pass_search_form.cleaned_data["lateArrivalDate"]
+            lateArrivalTime = pass_search_form.cleaned_data["lateArrivalTime"]
+            partySize = pass_search_form.cleaned_data["partySize"]
+            #save the party size
+            request.session['partySize'] = partySize
+            ride_list_notowner = models.Ride.objects.exclude(owner= user)
+            ride_list_open = ride_list_notowner.filter(status = 'open')
+            ride_list_share = ride_list_open.filter(isSharable = True)
+            ride_list_end = ride_list_open.filter(end = end)
+            #TODO 看看有没有其他写法
+            ride_list_date = ride_list_end.filter(date__range= (earlyArrivalDate,lateArrivalDate) )
+            # ride_list_final = ride_list_date.filter(time__lte=lateArrivalTime, time__gte=earlyArrivalTime)
+            ride_list_time = ride_list_date.exclude(Q(date=earlyArrivalDate) & Q(time__lt = earlyArrivalTime) )
+            ride_list_final = ride_list_time.exclude(Q(date=lateArrivalDate) & Q(time__gt=lateArrivalTime))
+
+            return render(request, "login/passengerSearchRide.html", locals())
+    return render(request, "login/passengerSearchRide.html", locals())
+
 def editRide(request):
     if not request.session.get('is_login', None):
         message = "Please log in first！"
@@ -65,13 +109,15 @@ def passengerPage(request):
     username = request.session.get('user_name', None)
     user = models.User.objects.get(name=username)
     rideList = user.ride_set.all()
-
+    rideJoinedList = models.Ride.objects.filter(sharer__owner= user)
     if 'create ride' in request.GET:
         return redirect("/createRide")
     if 'Edit' in request.GET:
         ride_edit_id = request.GET.get('Edit')
         request.session['ride_edit_id'] = ride_edit_id
         return redirect("/editRide")
+    if 'search ride' in request.GET:
+        return redirect("/passengerSearchRide")
     # user = models.User.objects.get(name=request.session['user_name'])
     # rideList = models.Ride.objects.filter(owner=user)
 
@@ -239,7 +285,7 @@ def index(request):
             else:
                 return redirect('/driverRegister/')
         else:
-            return redirect('/index/')
+            return redirect('/passenger/')
 
     return render(request,'login/index.html')
 

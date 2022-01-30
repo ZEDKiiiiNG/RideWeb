@@ -69,11 +69,11 @@ class RideForm(forms.Form):
 
 class passengerSearchRideForm(forms.Form):
     end = forms.CharField(label="Destination ", max_length=32, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    earlyArrivalDate = forms.DateField(label="Arrival date", widget=calendar_widget)
-    earlyArrivalTime = forms.TimeField(label="Arrival time", widget=time_widget, help_text='ex: 10:30AM',
+    earlyArrivalDate = forms.DateField(label="Earliest Arrival date", widget=calendar_widget, help_text= 'ex: 12/23/2018')
+    earlyArrivalTime = forms.TimeField(label="Earliest Arrival time", widget=time_widget, help_text='ex: 10:30AM',
                                        input_formats=valid_time_formats)
-    lateArrivalDate = forms.DateField(label="Arrival date", widget=calendar_widget)
-    lateArrivalTime = forms.TimeField(label="Arrival time", widget=time_widget, help_text='ex: 10:30AM',
+    lateArrivalDate = forms.DateField(label="Latest Arrival date", widget=calendar_widget, help_text= 'ex: 12/23/2018')
+    lateArrivalTime = forms.TimeField(label="Latest Arrival time", widget=time_widget, help_text='ex: 10:30AM',
                                        input_formats=valid_time_formats)
     partySize = forms.IntegerField(label="Party Passengers number", widget=forms.NumberInput)
 

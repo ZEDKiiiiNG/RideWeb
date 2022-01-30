@@ -15,18 +15,7 @@
 {#        {{ ride_self }}#}
 {#        {% endfor %}#}
 
-{#         owner = models.ForeignKey(User, on_delete=models.CASCADE)#}
-{#    driverId = models.IntegerField(default=-1, blank=True)#}
-{#    date = models.DateField(default=timezone.now)#}
-{#    time = models.TimeField(default=timezone.now)#}
-{#    start = models.CharField(max_length=32)#}
-{#    end = models.CharField(max_length=32)#}
-{#    partySize = models.IntegerField()#}
-{#    # open, confirmed or complete#}
-{#    status = models.CharField(max_length=32, default= 'open')#}
-{#    sharer = models.ManyToManyField(User, related_name= 'sharer')#}
-{#    isSharable = models.BooleanField(default=False)#}
-{#    specialRequests = models.TextField(blank=True, default="")#}
+
         <h2><div style="width:100%;text-align:center">Your own Ride</div></h2>
         <table class="table table-bordered">
 
@@ -99,7 +88,82 @@
         {% endfor %}
         </tbody>
       </table>
+    <h2><div style="width:100%;text-align:center">Joint Ride </div></h2>
+        <form method="GET">
+        <button type="submit" class="btn btn-primary" name="search ride" >search ride</button>
+        </form>
 
+        <table class="table table-bordered">
+
+        <thead>
+
+{#          <th><div style="width:100%;text-align:center"></div></th>#}
+          <th><div style="width:100%;text-align:center">Ride Owner</div></th>
+          <th><div style="width:100%;text-align:center"> Driver info</div></th>
+          <th><div style="width:100%;text-align:center">Arrival date</div></th>
+          <th><div style="width:100%;text-align:center"> Arrival time </div></th>
+          <th><div style="width:100%;text-align:center"> Starting  </div></th>
+          <th><div style="width:100%;text-align:center"> Destination </div></th>
+          <th><div style="width:100%;text-align:center"> Owner passenger numbers </div></th>
+          <th><div style="width:100%;text-align:center"> Sharer name and party numbers </div></th>
+          <th><div style="width:100%;text-align:center"> is Sharable </div></th>
+          <th><div style="width:100%;text-align:center"> Special Requests </div></th>
+          <th><div style="width:100%;text-align:center"> Status </div></th>
+            <th><div style="width:100%;text-align:center"> Operation </div></th>
+      <th></th>
+          </tr>
+        </thead>
+        <tbody>
+    <tr>
+  {% for ride_item in rideJoinedList %}
+      {% if ride_item.status != 'complete' %}
+              <td><div style="width:100%;text-align:center">{{ride_item.owner.name}}</div></td>
+      {% if ride_item.status == 'confirmed' %}
+          <td><div style="width:100%;text-align:center">Driver name:{{ride_item.driver.owner.name}}<br>
+              Vehicle Type: {{ ride_item.driver.vehicleType}}<br>
+              Licence Plate: {{ ride_item.driver.licensePlateNumber}}<br>
+              Allowed Passengers: {{ ride_item.driver.allowedPassengers}}<br>
+              Speical Text: {{ ride_item.driver.specialInfo }}
+          </div></td>
+          {% else %}
+            <td><div style="width:100%;text-align:center">Ride not confirmed yet</div></td>
+      {% endif %}
+          <td><div style="width:100%;text-align:center">{{ride_item.date}}</div></td>
+          <td><div style="width:100%;text-align:center">{{ride_item.time}}</div></td>
+          <th><div style="width:100%;text-align:center">{{ride_item.start}}</div></th>
+          <th><div style="width:100%;text-align:center"> {{ride_item.end}} </div></th>
+          <th><div style="width:100%;text-align:center">{{ride_item.partySize}} </div></th>
+          <th><div style="width:100%;text-align:center">
+              {% for joint_ride in ride_item.sharer.all %}
+              Sharer name {{joint_ride.owner.name}}<br>
+                  Sharer party number {{joint_ride.partySize}}<br>
+              {% endfor %}
+          </div></th>
+          {% if ride_item.isSharable %}
+              <th><div style="width:100%;text-align:center"> Sharable  </div></th>
+              {% else %}
+              <th><div style="width:100%;text-align:center"> not Sharable  </div></th>
+          {% endif %}
+          <th><div style="width:100%;text-align:center"> {{ride_item.specialRequests}}  </div></th>
+          <th><div style="width:100%;text-align:center"> {{ride_item.status}} </div></th>
+{#      open or claimed can be modify by owner#}
+      {% if ride_item.status == 'open' or ride_item.status == 'claimed'%}
+      <td><div style="width:100%;text-align:center">
+        <form method="GET">
+        <button type="submit" class="btn btn-primary" name="Edit" value= {{ ride_item.id }}>Edit</button>
+        </form>
+      </div>
+    </td>
+          {% else %}
+            <td><div style="width:100%;text-align:center">Ride already confirmed no change can be made</div></td>
+      {% endif %}
+
+    </tr>
+      {% endif %}
+
+        {% endfor %}
+        </tbody>
+      </table>
 
     {% else %}
     <h1>You have not logged in yet！</h1>
