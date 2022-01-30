@@ -131,8 +131,8 @@ def createRide(request):
             end = ride_form.cleaned_data["end"]
             # start to make sure driver know where to pick
             start = ride_form.cleaned_data["start"]
-            arrivalDate = ride_form.cleaned_data["arrivalDate"]
-            arrivalTime = ride_form.cleaned_data["arrivalTime"]
+            arrivalDate = ride_form.cleaned_data["date"]
+            arrivalTime = ride_form.cleaned_data["time"]
             partySize = ride_form.cleaned_data["partySize"]
             specialRequests = ride_form.cleaned_data["specialRequests"]
 
@@ -149,7 +149,8 @@ def createRide(request):
         else:
             message = 'please check the input format'
             return render(request, "login/createRide.html", locals())
-
+    ride_form = RideForm()
+    newRide = models.Ride.objects.all
     return render(request, "login/createRide.html", locals())
 
 def driverEdit(request):

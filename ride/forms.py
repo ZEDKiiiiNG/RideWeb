@@ -30,42 +30,45 @@ class DriverRigisterForm(forms.Form):
     allowedPassengers = forms.IntegerField(label="allowed Passengers number",widget=forms.NumberInput)
     specialInfo = forms.CharField(label="special Info",widget=forms.TextInput(attrs={'class': 'form-control'}))
 
-class RideForm(forms.Form):
-    end = forms.CharField(label="Destination ",max_length=32, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    #start to make sure driver know where to pick
-    start = forms.CharField(label="Start Area ", max_length=32, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    arrivalDate = forms.DateField(label="Arrival date",widget=calendar_widget , help_text='ex: 12/23/2018')
-    arrivalTime = forms.TimeField(label="Arrival time", widget=time_widget, help_text='ex: 10:30',
-                                 input_formats=valid_time_formats)
-    partySize = forms.IntegerField( label="Party Passengers number",widget=forms.NumberInput)
-    specialRequests = forms.CharField(required=False,label="Special requests",widget=forms.TextInput(attrs={'class': 'form-control'}))
-    # vehicleTypeRequest = forms.CharField(label="Vehicle type request",max_length=32, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    isSharable = forms.BooleanField(required=False,label="Ride sharable",initial= False)
-    status = forms.CharField(initial="open", label="Status", max_length=32, disabled=True,
-                             widget=forms.TextInput(attrs={'class': 'form-control'}))
+# class RideForm(forms.Form):
+#     end = forms.CharField(label="Destination ",max_length=32, widget=forms.TextInput(attrs={'class': 'form-control'}))
+#     #start to make sure driver know where to pick
+#     start = forms.CharField(label="Start Area ", max_length=32, widget=forms.TextInput(attrs={'class': 'form-control'}))
+#     arrivalDate = forms.DateField(label="Arrival date",widget=calendar_widget , help_text='ex: 12/23/2018')
+#     arrivalTime = forms.TimeField(label="Arrival time", widget=time_widget, help_text='ex: 10:30',
+#                                  input_formats=valid_time_formats)
+#     partySize = forms.IntegerField( label="Party Passengers number",widget=forms.NumberInput)
+#     specialRequests = forms.CharField(required=False,label="Special requests",widget=forms.TextInput(attrs={'class': 'form-control'}))
+#     # vehicleTypeRequest = forms.CharField(label="Vehicle type request",max_length=32, widget=forms.TextInput(attrs={'class': 'form-control'}))
+#     isSharable = forms.BooleanField(required=False,label="Ride sharable",initial= False)
+#     status = forms.CharField(initial="open", label="Status", max_length=32, disabled=True,
+#                              widget=forms.TextInput(attrs={'class': 'form-control'}))
 
 # Need to change the original fields name to corresponding model name. e.g. Change all 'arrivalDate' to 'date'
-# class RideForm(forms.ModelForm):
-#     class Meta:
-#         model = models.Ride
-#         fields = ('start', 'end', 'date', 'time', 'partySize', 'specialText', 'isSharable')
-#         widgets = {
-#             "start": TextInput(attrs={'class': 'form-control'}),
-#             "end": TextInput(attrs={'class': 'form-control'}),
-#             "date": DateInput(attrs={'type': 'date'}),
-#             "time": TimeInput(format='%H:%M'),
-#             "partySize": TextInput(attrs={'class': 'form-control'}),
-#             "specialText": TextInput(attrs={'class': 'form-control'}),
-#         }
-#         labels = {
-#             "start": "Departure",
-#             "end": "Destination",
-#             "date": "Arrival Date",
-#             "time": "Arrival Time",
-#             "partySize": "Party Size",
-#             "specialText": "Special Information",
-#             "isSharable": "Sharable?",
-#         }
+class RideForm(forms.ModelForm):
+    class Meta:
+        model = models.Ride
+        fields = ('start', 'end', 'date', 'time', 'partySize', 'specialRequests', 'isSharable')
+        help_texts = {
+            'time': '(Time Format: 14:30)'
+        }
+        widgets = {
+            "start": TextInput(attrs={'class': 'form-control'}),
+            "end": TextInput(attrs={'class': 'form-control'}),
+            "date": DateInput(attrs={'type': 'date'}),
+            "time": TimeInput(format='%H:%M'),
+            "partySize": TextInput(attrs={'class': 'form-control'}),
+            "specialRequests": TextInput(attrs={'class': 'form-control'}),
+        }
+        labels = {
+            "start": "Departure",
+            "end": "Destination",
+            "date": "Arrival Date",
+            "time": "Arrival Time",
+            "partySize": "Party Size",
+            "specialRequests": "Special Information",
+            "isSharable": "Sharable?",
+        }
 
 class passengerSearchRideForm(forms.Form):
     end = forms.CharField(label="Destination ", max_length=32, widget=forms.TextInput(attrs={'class': 'form-control'}))
