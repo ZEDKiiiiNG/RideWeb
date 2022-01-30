@@ -30,6 +30,7 @@ def editRide(request):
         return render(request, 'login/login.html', locals())
     ride_form = RideForm()
     ride_edit_id = request.session.get('ride_edit_id', None)
+    #TODO 前面部分要不要也改id写法
     ride_item = models.Ride.objects.get(id = ride_edit_id)
     if request.method == "POST" and request.POST:
         ride_form = RideForm(request.POST)
@@ -114,7 +115,10 @@ def driverEdit(request):
     driver_register_form = DriverRigisterForm()
     username = request.session.get('user_name', None)
     user = models.User.objects.get(name=username)
-    driver_set = user.driver_set.all()
+    # driver_set = user.driver_set.all()
+    # unique owner for every driver
+    driver_self = models.Driver.objects.get(owner = user)
+
     if request.method == "POST":
         driver_register_form = DriverRigisterForm(request.POST)
         message = "Please check the content！"
@@ -167,8 +171,9 @@ def driverPage(request):
 
     username = request.session.get('user_name', None)
     user = models.User.objects.get(name=username)
-    driver_set = user.driver_set.all()
-    # driver_self = models.Driver.objects.filter(owner=user)
+    # driver_set = user.driver_set.all()
+    # unique owner for every driver
+    driver_self = models.Driver.objects.get(owner=user)
 
 
     return render(request, 'login/driverPage.html', locals())
