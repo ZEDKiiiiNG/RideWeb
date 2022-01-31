@@ -128,9 +128,7 @@ def editRide(request):
 def passengerPage(request):
     if not request.session.get('is_login', None):
         message = "Please log in first！"
-        # if already signed in, then cannot register
-        # return redirect("/login/")
-        #TODO 怎么让views也进入login
+
         return render(request, 'login/login.html', locals())
 
     username = request.session.get('user_name', None)
@@ -150,8 +148,7 @@ def passengerPage(request):
         request.session['joint_ride_edit_id'] = ride_edit_id
         return redirect("/jointEditRide")
 
-    # user = models.User.objects.get(name=request.session['user_name'])
-    # rideList = models.Ride.objects.filter(owner=user)
+
 
     return render(request, "login/passenger.html", locals())
 
@@ -248,7 +245,6 @@ def driverPage(request):
 
     username = request.session.get('user_name', None)
     user = models.User.objects.get(name=username)
-    # driver_set = user.driver_set.all()
     # unique owner for every driver
     driver_self = models.Driver.objects.get(owner=user)
     ride_list = models.Ride.objects.filter(driver__owner = user)
@@ -321,19 +317,6 @@ def driverRegister(request):
 
             username = request.session.get('user_name', None)
             user = models.User.objects.get(name=username)
-            #TODO 检查逻辑
-            # if request.session.get('is_driver', None):
-            #     # if already is driver, then just addit
-            #
-            #     #when already a driver then cannot have drive info
-            #     driver = models.Driver.objects.get(owner=user)
-            #     driver.vehicleType = vehicleType
-            #     driver.licensePlateNumber = licensePlateNumber
-            #     driver.allowedPassengers = allowedPassengers
-            #     driver.specialInfo = specialInfo
-            # else:
-            #     driver = models.Driver(owner=user, vehicleType=vehicleType, licensePlateNumber=licensePlateNumber,
-            #                          allowedPassengers=allowedPassengers, specialInfo=specialInfo)
             driver = models.Driver(owner=user, vehicleType=vehicleType, licensePlateNumber=licensePlateNumber,
                                     allowedPassengers=allowedPassengers, specialInfo=specialInfo)
             user.isDriver = True
@@ -341,15 +324,10 @@ def driverRegister(request):
             request.session['is_driver'] = True
 
             driver.save()
-            # TODO 修改为driver 页面
             return redirect('/Driver/')
 
     driver_register_form = DriverRigisterForm()
-    #TODO figure out the use of this part of code
-    # driver_name = request.session['user_name']
-    # driver = models.User.objects.get(username=driver_name)
-    # driver_info_Num = driver.driverinfo_set.count()
-    # driver_info = driver.driverinfo_set.all()
+
     return render(request, "login/driverRegister.html", locals())
 
 
@@ -436,9 +414,5 @@ def logout(request):
         # 如果本来就未登录，也就没有登出一说
         return redirect('/login/')
     request.session.flush()
-    # 或者使用下面的方法
-    # del request.session['is_login']
-    # del request.session['user_id']
-    # del request.session['user_name']
-    # return redirect("/index/")
+
     return redirect('/login/')
