@@ -29,7 +29,7 @@ def jointEditRide(request):
         return render(request, 'login/login.html', locals())
     joint_ride_form = JointRideForm()
     ride_edit_id = request.session.get('joint_ride_edit_id', None)
-    #TODO 前面部分要不要也改id写法
+    #use id to find ride
     ride_item = models.Ride.objects.get(id = ride_edit_id)
     if request.method == "POST" and request.POST:
         joint_ride_form = JointRideForm(request.POST)
@@ -58,7 +58,7 @@ def passengerSearchRide(request):
             return redirect("/passenger/")
         if 'Join' in request.GET:
             ride_join_id = request.GET.get('Join')
-            #TODO
+
             ride_item = models.Ride.objects.get(id=ride_join_id)
             username = request.session.get('user_name', None)
             user = models.User.objects.get(name=username)
@@ -86,7 +86,7 @@ def passengerSearchRide(request):
             ride_list_open = ride_list_notowner.filter(status = 'open')
             ride_list_share = ride_list_open.filter(isSharable = True)
             ride_list_end = ride_list_open.filter(end = end)
-            #TODO 看看有没有其他写法
+
             ride_list_date = ride_list_end.filter(date__range= (earlyArrivalDate,lateArrivalDate) )
             # ride_list_final = ride_list_date.filter(time__lte=lateArrivalTime, time__gte=earlyArrivalTime)
             ride_list_time = ride_list_date.exclude(Q(date=earlyArrivalDate) & Q(time__lt = earlyArrivalTime) )
@@ -208,10 +208,7 @@ def driverEdit(request):
 
             username = request.session.get('user_name', None)
             user = models.User.objects.get(name=username)
-            #TODO 检查逻辑
-            # if request.session.get('is_driver', None):
-            #     # if already is driver, then just addit
-            #
+
             #when already a driver then cannot have drive info
             driver = models.Driver.objects.get(owner=user)
             same_licensePlateNumber = models.Driver.objects.filter(licensePlateNumber=licensePlateNumber)
@@ -234,9 +231,7 @@ def driverEdit(request):
 def driverPage(request):
     if not request.session.get('is_login', None):
         message = "Please log in first！"
-        # if already signed in, then cannot register
-        # return redirect("/login/")
-        #TODO 怎么让views也进入login
+
         return render(request, 'login/login.html', locals())
     if not request.session.get('is_driver', None):
         message = "Please register as a driver first ！"
