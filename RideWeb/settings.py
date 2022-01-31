@@ -26,8 +26,14 @@ SECRET_KEY = 'django-insecure-2-jxr7othn#a_3^oll92!=q9fgft%-^@qf9^vas+64a2-&lxj)
 DEBUG = True
 
 ALLOWED_HOSTS = ['vcm-24622.vm.duke.edu', '127.0.0.1']
-
-
+# email settings
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'floraliu299@gmail.com'
+EMAIL_HOST_PASSWORD = 'zrdsifrrqurofzbu'
+EMAIL_USE_TLS = True
+EMAIL_FROM = 'FloraLiu@gmail.com'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # Application definition
 
 INSTALLED_APPS = [

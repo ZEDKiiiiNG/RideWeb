@@ -20,7 +20,8 @@ from django.shortcuts import render,redirect
 from .forms import UserForm,RegisterForm,DriverRigisterForm, RideForm,passengerSearchRideForm, JointRideForm
 from . import models
 from django.db.models import Q
-
+from django.core.mail import send_mail
+from RideWeb.settings import EMAIL_HOST_USER
 
 def jointEditRide(request):
     if not request.session.get('is_login', None):
@@ -243,17 +244,58 @@ def driverPage(request):
     if not request.session.get('is_driver', None):
         message = "Please register as a driver first ！"
         return redirect('/driverRegister/')
-    if request.method == "GET" and request.GET:
-        if 'Edit' in request.GET:
-            return redirect('/driverEdit/')
+
 
     username = request.session.get('user_name', None)
     user = models.User.objects.get(name=username)
     # driver_set = user.driver_set.all()
     # unique owner for every driver
     driver_self = models.Driver.objects.get(owner=user)
+    ride_list = models.Ride.objects.filter(driver__owner = user)
+    ride_list_confirmed = ride_list.filter(status= 'confirmed')
+
+    #search part:
+    from django.db.models import Sum
+    ride_open = models.Ride.objects.filter(status= 'open')
+    ride_vehicle = ride_open.filter(vehicleTypeRequest= driver_self.vehicleType)
+    ride_available_list = ride_vehicle.filter(specialRequests= driver_self.specialInfo)
+    for ride in ride_vehicle.all():
+        ride_id = ride.id
+        total_passenger_num = ride.partySize
+        for share in ride.sharer.all():
+            total_passenger_num += share.partySize
+        if total_passenger_num > driver_self.allowedPassengers:
+            ride_available_list = ride_available_list.exclude(id = ride_id)
+
+    if request.method == "GET" and request.GET:
+        if 'Edit' in request.GET:
+            return redirect('/driverEdit/')
+        if 'Complete' in request.GET:
+            ride_confirmed_id  = request.GET.get('Complete')
+            ride_item = models.Ride.objects.get(id = ride_confirmed_id)
+            ride_item.status = 'complete'
+            ride_item.save()
+        if 'Confirmed' in request.GET:
+            ride_confirmed_id  = request.GET.get('Confirmed')
+            ride_item = models.Ride.objects.get(id = ride_confirmed_id)
+            ride_item.driver = driver_self
+            ride_item.status = 'confirmed'
+            ride_owner_email = ride_item.owner.email
+            ride_email = []
+            ride_email.append(str(ride_owner_email))
+            for shar in ride_item.sharer.all():
+                ride_email.append(str(shar.owner.email))
+            #send email
+            send_mail(
+                subject='Ride Confirmed',
+                message = 'Your ride has already been confrimed',
+                from_email= EMAIL_HOST_USER,
+                recipient_list = ride_email,
+                fail_silently= False
+            )
 
 
+            ride_item.save()
     return render(request, 'login/driverPage.html', locals())
 
 

@@ -28,7 +28,7 @@ class DriverRigisterForm(forms.Form):
     vehicleType = forms.CharField(label="vehicle Type",max_length=32, widget=forms.TextInput(attrs={'class': 'form-control'}))
     licensePlateNumber = forms.CharField(label="license Plate Number",max_length=32, widget=forms.TextInput(attrs={'class': 'form-control'}))
     allowedPassengers = forms.IntegerField(label="allowed Passengers number",widget=forms.NumberInput)
-    specialInfo = forms.CharField(label="special Info",widget=forms.TextInput(attrs={'class': 'form-control'}))
+    specialInfo = forms.CharField(required= False, label="special Info",widget=forms.TextInput(attrs={'class': 'form-control'}))
 
 class RideForm(forms.Form):
     end = forms.CharField(label="Destination ",max_length=32, widget=forms.TextInput(attrs={'class': 'form-control'}))
