@@ -258,7 +258,9 @@ def driverPage(request):
     from django.db.models import Sum
     ride_open = models.Ride.objects.filter(status= 'open')
     ride_vehicle = ride_open.filter(vehicleTypeRequest= driver_self.vehicleType)
-    ride_available_list = ride_vehicle.filter(specialRequests= driver_self.specialInfo)
+    ride_owner = ride_vehicle.exclude(owner=user)
+    ride_sharer = ride_owner.exclude(sharer__owner=user)
+    ride_available_list = ride_sharer.filter(specialRequests= driver_self.specialInfo)
     for ride in ride_vehicle.all():
         ride_id = ride.id
         total_passenger_num = ride.partySize
